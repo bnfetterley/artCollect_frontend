@@ -1,16 +1,18 @@
 import React, { Component } from 'react'
 // import StackGrid from "react-stack-grid"
-import { MDBContainer, MDBRow, MDBCol } from "mdbreact"
+// import { MDBContainer, MDBRow, MDBCol } from "mdbreact"
 // import { MDBRow } from "mdbreact"
 import '../index.css'
 import Modal from './Modal/Modal'
+import StackGrid from "react-stack-grid"
 
 
 export default class Artworks extends Component {
 
     state = {
         isShowing: false,
-        currentArtwork: null
+        currentArtwork: "artwork",
+        comment: ''
     }
 
     openModalHandler = (event, post) => {
@@ -27,91 +29,129 @@ export default class Artworks extends Component {
             isShowing: false
         });
     }
+
+    handleChange = (event) => {
+        event.preventDefault()
+    
+        this.setState({
+         [event.target.name]: event.target.value
+        })
+      }
   
     
     render() {
         let classArray = ["col-12 col-md-8 ","col-6 col-md-4", "col-6"]
-        // let images = this.props.posts.map(post => post.image)  
-        // let posts =  this.props.posts.map(post => post)  
-        // let ids = this.props.posts.map(post => post.id)  
-        
-        console.log(this.state.currentArtwork)
+        let currentUser = this.props.users.find(user => user.id === this.state.currentArtwork.user_id)
+        // let currentUsername = currentUser.username
+        let renderComments = this.props.comments.filter(comment => comment.post_id === this.state.currentArtwork.id)
+
+        // console.log(currentUser.username)
+      
+
         return (
 
 <div class="container">
 
 { this.state.isShowing ? <div onClick={this.closeModalHandler} className="back-drop"></div> : null }
 
-<Modal
+{this.state.isShowing ?  <Modal
+    currentArtwork = {this.state.currentArtwork}
+    className="modal"
+    show={this.state.isShowing}
+    close={this.closeModalHandler}>
+        <div> SHOW INFO <br></br>
+
+        <img src = {this.state.currentArtwork.image} />
+           <p> Artist:  {this.state.currentArtwork.artist}
+            </p> 
+    
+            <p>
+               USERNAME's  thoughts on this artwork: {this.state.currentArtwork.post_content} </p>
+            <p> <b>COMMENTS: </b> </p>
+
+          
+               {renderComments.map(comment => <p> {comment.content} </p>)}
+        
+            <form onSubmit={(event) => this.props.submitComment(event, this.state)}>
+
+        <label>
+         What do you think? Add a comment below!<p>
+          <textarea value={this.state.comment} onChange={(event) => this.handleChange(event)} name = "comment" />
+          </p> </label> 
+
+        <input type="submit" value="Submit" />
+      </form>
+      
+             </div>
+</Modal> : null }
+{/* <Modal
     currentArtwork = {this.state.currentArtwork}
     className="modal"
     show={this.state.isShowing}
     close={this.closeModalHandler}>
         <div> SHOW INFO
-           <p> Artist: 
-            </p> 
-            <p>[username's] thoughts on this artwork:  </p>
 
+        <img src = {this.state.currentArtwork.image} />
+           <p> Artist:  {this.state.currentArtwork.artist}
+            </p> 
+    
+            <p>
+               USERNAME's  thoughts on this artwork: {this.state.currentArtwork.post_content} </p>
             <p> <b>COMMENTS: </b> </p>
 
+            {this.renderComments}
+               {(renderComments[1])} 
+               {renderComments.map(comment => <p> {comment.content} </p>)}
+        
+            <form onSubmit={(event) => this.props.submitComment(event, this.state)}>
 
-
-            <form onSubmit={this.handleSubmit}>
         <label>
          What do you think? Add a comment below!<p>
-          <textarea value={this.state.value} onChange={this.handleChange} />
+          <textarea value={this.state.comment} onChange={(event) => this.handleChange(event)} name = "comment" />
           </p> </label> 
+
         <input type="submit" value="Submit" />
       </form>
       
              </div>
-</Modal>
-<MDBContainer>
+</Modal> */}
+
+
+
+{/* <MDBContainer>
       <MDBRow>
-{this.props.posts.map(post =>  
-      <MDBCol size="6" md={this.props.size}  onClick = {(event) => this.openModalHandler(event, post)}>
+        {this.props.posts.map(post =>  
+      <MDBCol size="6" md={this.props.size}  key = {post.id}  onClick = {(event) => this.openModalHandler(event, post)}>
         <img src = {post.image} className="img-responsive fit-image"/>
         </MDBCol>
 
       )
       }
         </MDBRow>
-      </MDBContainer>
+      {/* {/* </MDBContainer> */}
 
-  {/* <MDBContainer>
-      <MDBRow>
-      <MDBCol size="6" md="4"  onClick = {(event) => this.openModalHandler(event)}>
-        <img src = {this.props.post.image} className="img-responsive fit-image"/>
+      {/* <MDBRow>
+        <MDBCol size="6">
+        <img src =   {this.props.posts[1].image}  class="img-responsive fit-image"/>
+        </MDBCol>
+        <MDBCol size="6">
+         <img src =   {this.props.posts[2].image} class="img-responsive fit-image"/>
         </MDBCol>
       </MDBRow> */}
-        {/* <MDBCol size="6" md="4" onClick = {(event, post) => this.openModalHandler(event, post)}>
-        <img src =  {this.props.post.image}className="img-responsive fit-image"/>
-        </MDBCol> )
-      </MDBRow>
 
-      <MDBRow>
-        <MDBCol size="6" md="4">
-        <img src =  {this.props.post.image} className="img-responsive fit-image"/>
-        </MDBCol>
-        <MDBCol size="6" md="4">
-        <img src =  {this.props.post.image} className="img-responsive fit-image"/>
-        </MDBCol>
-        <MDBCol size="6" md="4">
-        <img src =  {this.props.post.image} className="img-responsive fit-image"/>
-        </MDBCol>
-      </MDBRow>
+ {/* </MDBContainer> */} 
+ 
+ <StackGrid
+        columnWidth={200}
+      >
+          {this.props.posts.map(post =>  
+          <div key = {post.id}  onClick = {(event) => this.openModalHandler(event, post)}><img src = {post.image} className="img-responsive fit-image"/></div>)}
+         {this.props.posts.map(post =>  
+          <div key = {post.id}  onClick = {(event) => this.openModalHandler(event, post)}><img src = {post.image} className="img-responsive fit-image"/></div>)}
+         {this.props.posts.map(post =>  
+          <div key = {post.id}  onClick = {(event) => this.openModalHandler(event, post)}><img src = {post.image} className="img-responsive fit-image"/></div>)}
+      </StackGrid>
 
-      <MDBRow>
-        <MDBCol size="6">
-        <img src =   {this.props.post.image}  class="img-responsive fit-image"/>
-        </MDBCol>
-        <MDBCol size="6">
-         <img src =   {this.props.post.image} class="img-responsive fit-image"/>
-        </MDBCol>
-      </MDBRow>
-
-        // </MDBContainer> */}
-{/* </MDBContainer> */}
 </div>
 
         

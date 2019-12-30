@@ -10,7 +10,7 @@ export default class ArtworkContainer extends Component {
 
         return (
             <div>
-                 <Artworks  posts = {this.props.posts} size = {this.props.size} />)
+                 <Artworks  posts = {this.props.posts} size = {this.props.size} users = {this.props.users} comments = {this.props.comments} submitComment = {this.props.submitComment}/>)
           
             </div>
         )
