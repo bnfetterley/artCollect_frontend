@@ -24,7 +24,6 @@ const modal = (props) => {
                 </div>
                 <div className="modal-footer">
                     <button className="btn-cancel" onClick={props.close}>CLOSE</button>
-                    <button className="btn-continue">ADD TO YOUR COLLECTION</button>
                 </div>
             </div>
         </div>

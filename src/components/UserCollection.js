@@ -8,6 +8,7 @@ import Modal from './Modal/Modal'
 export default class UserCollection extends Component {
 
     state = {
+        collectionToRender: this.props.collectionToRender,
         isShowing: false,
         currentArtwork: "artwork",
         comment: '',
@@ -21,6 +22,21 @@ export default class UserCollection extends Component {
         newGenre: "Genre",
         newPostContent: "When you see this artwork.... What do you see? What do you feel? What do you think?"
     }
+
+  //   static getDerivedStateFromProps(nextProps, prevState){
+  //     if(nextProps.collectionToRender !== prevState.collectionToRender){
+  //       return { collectionToRender: nextProps.collectionToRender};
+  //    }
+  //    else return null;
+  //  }
+   
+  //  componentDidUpdate(prevProps, prevState) {
+  //    if(prevProps.someValue!==this.props.someValue){
+  //      //Perform some operation here
+  //      this.setState({someState: someValue});
+  //      this.classMethod();
+  //    }
+  //  }
 
     openModalHandler = (event, post) => {
         console.log(post)
@@ -61,7 +77,7 @@ export default class UserCollection extends Component {
 
     render() {
 
-        console.log(this.state)
+        console.log(this.props)
         let classArray = ["col-12 col-md-8 ","col-6 col-md-4", "col-6"]
         let currentUser = this.props.users.find(user => user.id === this.state.currentArtwork.user_id)
         // let currentUsername = currentUser.username
@@ -70,7 +86,7 @@ export default class UserCollection extends Component {
         let addCollectionView = this.state.toggleUpdateCollection === "view"
 
         // console.log(currentUser.username)
-      
+      // let userPosts = this.props.posts.filter(post => post.user_id === this.props.currentUserID)
 
         return (
 
@@ -87,12 +103,12 @@ export default class UserCollection extends Component {
     close={this.closeModalHandler}>
         <div> SHOW INFO <br></br>
 
-        <img src = {this.state.currentArtwork.image} />
+        <img src = {this.state.currentArtwork.image} className="image fit-image" />
            <p> Artist:  {this.state.currentArtwork.artist}
             </p> 
     
             <p>
-               USERNAME's thoughts on this artwork: {this.state.currentArtwork.post_content} </p>
+                Thoughts on this artwork: {this.state.currentArtwork.post_content} </p>
 
                <button onClick = {this.toggleUpdateForm} >update this post</button> <br></br>
 
@@ -110,6 +126,7 @@ export default class UserCollection extends Component {
                : null }
 
               <button onClick = {(event) => this.props.deletePost(event, this.state)}>delete this post</button> <br></br>
+             
 
 
       
@@ -137,7 +154,9 @@ export default class UserCollection extends Component {
 
 
 <MDBContainer>
-<a className="link dim gray b f1 f-headline-ns tc db mb3 mb4-ns" href="#" title="Home"> <header> <h1> BRI's COLLECTION </h1>  </header></a>
+<a className="link dim gray b f1 f-headline-ns tc db mb3 mb4-ns" href="#" title="Home"> <header> <h1 key={this.props.currentUsername}> {this.props.currentUsername}'s collection</h1>  </header></a>
+
+{/* <p>{ currentUser && currentUsername }</p> */}
 
 <button onClick = {this.toggleUpdateCollectionForm } >Add to your collection:</button>
 
@@ -166,49 +185,7 @@ export default class UserCollection extends Component {
       }
         </MDBRow>
 
-        <MDBRow>
-        {this.props.posts.map(post =>  
-    <MDBCol sm="4"  key = {post.id}  onClick = {(event) => this.openModalHandler(event, post)}> 
-    <img src = {post.image} className="img-responsive fit-image"/> 
-    </MDBCol>
-    )
-  }
-    <MDBCol sm="4">.col-sm-4</MDBCol>
-    <MDBCol sm="4">.col-sm-4</MDBCol>
-  </MDBRow>
-
-  <MDBRow>
-  {this.props.posts.map(post =>  
-    <MDBCol md="4" key = {post.id}  onClick = {(event) => this.openModalHandler(event, post)}>
-        <img src = {post.image} className="img-responsive fit-image"/> 
-      </MDBCol>
- )
-}
-  </MDBRow>
-
-  <MDBRow>
-  {this.props.posts.map(post =>  
-    <MDBCol md="4" key = {post.id}  onClick = {(event) => this.openModalHandler(event, post)}>
-        <img src = {post.image} className="img-responsive fit-image"/> 
-      </MDBCol>
- )
-}
-    <MDBCol lg="4">.col-lg-4</MDBCol>
-    <MDBCol lg="4">.col-lg-4</MDBCol>
-    <MDBCol lg="4">.col-lg-4</MDBCol>
-  </MDBRow>
-
-  <MDBRow>
-  {this.props.posts.map(post =>  
-    <MDBCol xl="4" key = {post.id}  onClick = {(event) => this.openModalHandler(event, post)}>
-        <img src = {post.image} className="img-responsive fit-image"/> 
-      </MDBCol>
-       )
-      }
-    <MDBCol xl="4">.col-xl-4</MDBCol>
-    <MDBCol xl="4">.col-xl-4</MDBCol>
-    <MDBCol xl="4">.col-xl-4</MDBCol>
-  </MDBRow>
+       
 
  </MDBContainer>
  

@@ -45,7 +45,7 @@ export default class Artworks extends Component {
         // let currentUsername = currentUser.username
         let renderComments = this.props.comments.filter(comment => comment.post_id === this.state.currentArtwork.id)
 
-        // console.log(currentUser.username)
+        console.log(this.props)
       
 
         return (
@@ -61,7 +61,7 @@ export default class Artworks extends Component {
     close={this.closeModalHandler}>
         <div> SHOW INFO <br></br>
 
-        <img src = {this.state.currentArtwork.image} />
+        <img src = {this.state.currentArtwork.image} className="image fit-image" />
            <p> Artist:  {this.state.currentArtwork.artist}
             </p> 
     
@@ -80,6 +80,7 @@ export default class Artworks extends Component {
           </p> </label> 
 
         <input type="submit" value="Submit" />
+        <button className="btn-continue" onClick = {(event) => this.props.addToCollection(event, this.state)}>ADD TO YOUR COLLECTION</button>
       </form>
       
              </div>
@@ -142,7 +143,7 @@ export default class Artworks extends Component {
  {/* </MDBContainer> */} 
  
  <StackGrid
-        columnWidth={200}
+        columnWidth={160}
       >
           {this.props.posts.map(post =>  
           <div key = {post.id}  onClick = {(event) => this.openModalHandler(event, post)}><img src = {post.image} className="img-responsive fit-image"/></div>)}

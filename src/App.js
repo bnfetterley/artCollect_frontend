@@ -5,8 +5,10 @@ import "mdbreact/dist/css/mdb.css";
 import './App.css';
 import ArtworkContainer from './containers/ArtworkContainer'
 import UserCollection from './components/UserCollection'
+import Signup from './components/Signup'
 import Nav from './components/Nav';
-import { Route, Switch, Link, NavLink } from 'react-router-dom'
+import { Route, Switch, Link, NavLink, Redirect } from 'react-router-dom'
+import Select from 'react-select';
 
 
 class App extends Component {
@@ -16,12 +18,11 @@ class App extends Component {
     users: [],
     comments: [],
     currentUserID: 3,
-    collectionToRender: []
+    collectionToRender: [],
+    currentUsername: "string"
   }
 
-
-//FETCH ALL THE DATA - USERS, POSTS, COMMENTS
-  componentDidMount(){
+  fetchPosts = () => {
     fetch(`http://localhost:3000/posts`)
     .then(resp => resp.json())
     .then(json_resp => 
@@ -29,26 +30,119 @@ class App extends Component {
        posts: json_resp
       }) 
       )
+  }
 
-  
-        fetch(`http://localhost:3000/users`)
-        .then(resp => resp.json())
-        .then(json_resp => 
-          this.setState({
-           users: json_resp
-          }) 
-          )
+  fetchUsers = () => {
+    fetch(`http://localhost:3000/users`)
+    .then(resp => resp.json())
+    .then(json_resp => 
+      this.setState({
+       users: json_resp
+      }) 
+      )
 
-          fetch(`http://localhost:3000/comments`)
-          .then(resp => resp.json())
-          .then(json_resp => 
-            this.setState({
-             comments: json_resp
-            }) 
-            )
+  }
+
+  fetchComments = () => {
+    fetch(`http://localhost:3000/comments`)
+    .then(resp => resp.json())
+    .then(json_resp => 
+      this.setState({
+       comments: json_resp
+      }) 
+    )
+  }
+
+
+
+//FETCH ALL THE DATA - USERS, POSTS, COMMENTS
+  componentDidMount(){
+   this.fetchPosts()
+   this.fetchComments()
+   this.fetchUsers()
       
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if(prevProps.collectionToRender !== this.state.collectionToRender){
+      
+      // this.fetchUsers()
+  }}
+  
+
+
+  //CREATE A USER
+
+  submitUser = (event, state) => {
+    console.log(event)
+    event.preventDefault()
+    fetch('http://localhost:3000/users', {
+        method:'POST',
+       headers: { 
+           'Content-type': 'application/json',
+           'accept': 'application/json'
+       },
+       body: JSON.stringify({
+      username: state.username
+    
+        })
+      })
+      .then(resp => resp.json())
+      .then(json_resp => 
+ this.setState({
+   currentUserID: json_resp.id,
+   currentUsername: json_resp.username
+ })
+        )
+// this.redirect()                
+
+}
+
+//ADD TO COLLECTION
+
+addToCollection = (event, artworkState) => {
+  console.log(artworkState)
+  this.setState({
+    collectionToRender: [...this.state.collectionToRender, artworkState.currentArtwork]
+  })
+  // fetch(`http://localhost:3000/users/${this.state.currentUserID}`, {
+  //   method:'PATCH',
+  //  headers: { 
+  //      'Content-type': 'application/json',
+  //      'accept': 'application/json'
+  //  },
+  //  body: JSON.stringify({
+  // post_id: artworkState.currentArtwork.id
+  //   })
+  // })
+  // .then(resp => resp.json())
+  // .then(json_resp => {console.log(json_resp)})
+}
+
+//SUBMIT A NEW USER
+
+// handleSubmit = (event) => {
+//   console.log(event)
+//   event.preventDefault()
+//   fetch('http://localhost:3000/users', {
+//       method:'POST',
+//      headers: { 
+//          'Content-type': 'application/json',
+//          'accept': 'application/json'
+//      },
+//      body: JSON.stringify({
+//     username: this.state.username
+  
+//       })
+//     })
+//     .then(resp => resp.json())
+//     .then(json_resp => 
+//       this.setState({
+//           currentUserID: json_resp.id,
+//           currentUsername: this.state.username
+//       })
+//       )
+//     }
   // ADD A COMMENT
 
  submitComment = (event, artWorkState) => {
@@ -163,7 +257,8 @@ console.log(updatedArray)
    .then(json_resp => 
     
     this.setState({
-      posts: [...this.state.posts, json_resp]
+      posts: [...this.state.posts, json_resp],
+      collectionToRender: [this.state.collectionToRender, json_resp]
      })
   
   
@@ -176,13 +271,12 @@ console.log(updatedArray)
   render() {
     
     let ID = this.state.currentUserID
-    let found = this.state.posts.filter(function(element) { 
-      return element.user_id === ID ; 
-    }); 
+    // let found = this.state.collectionToRender; 
 
     let user = this.state.users.find(user => user.id === ID)
   
  
+    console.log(this.state.collectionToRender)
     console.log(this.state)
   return (
     <div className="App">
@@ -191,15 +285,21 @@ console.log(updatedArray)
   <a className="link dim gray b f1 f-headline-ns tc db mb3 mb4-ns" href="#" title="Home"> <header> <h1> artCollect </h1>  </header></a>
  
   <div className="tc pb3">
-    <a className="link dim gray f6 f5-ns dib pr3 ma3 mh3 mr3" href="/home" title="Home">Home</a>
-    <a className="link dim gray f6 f5-ns dib pr3 ma3 mh3 mr3" href="/usercollection" title="About">My Collection</a>
-    <a className="link dim gray f6 f5-ns dib pr3 ma3 mh3 mr3" href="#" title="Store">Genres</a>
-    <a className="link dim gray f6 f5-ns pr3 ma3 mh3 dib" href="#" title="Contact">Sort By</a>
+    {/* <a className="link dim gray f6 f5-ns dib pr3 ma3 mh3 mr3" href="/home" title="Home">Home</a> */}
+    < Link to="/home">Home</Link>
+    {/* <a className="link dim gray f6 f5-ns dib pr3 ma3 mh3 mr3" href="/signup" title="About">Signup</a> */}
+    < Link to="/signup">Signup</Link>
+    {/* <a className="link dim gray f6 f5-ns dib pr3 ma3 mh3 mr3" href="/usercollection" title="About">My Collection</a> */}
+    < Link to="/usercollection">My Collection</Link>
+    {/* <a className="link dim gray f6 f5-ns dib pr3 ma3 mh3 mr3" href="#" title="Store"> <Select options = {genres}/> </a><br></br> */}
+    {/* <a className="link dim gray f6 f5-ns pr3 ma3 mh3 dib" href="#" title="Contact"><Select /> </a> */}
   </div>
 </nav>
       <Switch>
-      <Route path= "/home" render={(props) => <ArtworkContainer posts = {this.state.posts} users = {this.state.users} comments = {this.state.comments} submitComment ={this.submitComment} />}/>
-      <Route path= "/usercollection" render={(props) => <UserCollection posts = {found}  users = {this.state.users} comments = {this.state.comments} submitUpdate ={this.submitUpdate}   deletePost = {this.deletePost}  submitNewPost = {this.submitNewPost}/>}/>
+      <Route path= "/home" render={(props) => <ArtworkContainer addToCollection = {this.addToCollection} posts = {this.state.posts} users = {this.state.users} comments = {this.state.comments} submitComment ={this.submitComment} />}/>
+      <Route path= "/usercollection" render={(props) => <UserCollection currentUsername = {this.state.currentUsername} currentUserID = {this.state.currentUserID} posts = {this.state.collectionToRender}  users = {this.state.users} comments = {this.state.comments} submitUpdate ={this.submitUpdate}   deletePost = {this.deletePost}  submitNewPost = {this.submitNewPost}/>}/>
+      <Route path= "/signup" render={(props) => <Signup history={this.props.history} handleSubmit = {this.submitUser} posts = {this.state.posts} users = {this.state.users} comments = {this.state.comments} submitComment ={this.submitComment} />}/>
+
      </Switch>
        
     </div>
@@ -207,4 +307,12 @@ console.log(updatedArray)
 }
 }
 
+const genres = [
+  { label: "Scuplture", value: 1 },
+  { label: "Impressionist", value: 2 },
+  { label: "Contemporary", value: 3 },
+  { label: "Modern", value: 4 },
+  { label: "Performance Art", value: 5 },
+  { label: "Miscellaneous", value: 6 }
+];
 export default App;
