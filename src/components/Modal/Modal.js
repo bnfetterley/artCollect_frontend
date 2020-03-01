@@ -6,7 +6,6 @@ const modal = (props) => {
     return (
                 
         <div>
-            {console.log(props)}
             
             <div className="modal-wrapper"
                 style={{
@@ -14,7 +13,7 @@ const modal = (props) => {
                     opacity: props.show ? '1' : '0'
                 }}>
                 <div className="modal-header">
-            <h3>{props.currentArtwork.artist} </h3>
+            {/* <h3>{props.currentArtwork.artist} </h3> */}
                     <span className="close-modal-btn" onClick={props.close}>×</span>
                 </div>
                 <div className="modal-body">

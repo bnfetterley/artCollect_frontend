@@ -7,7 +7,7 @@ import ArtworkContainer from './containers/ArtworkContainer'
 import UserCollection from './components/UserCollection'
 import Signup from './components/Signup'
 import Nav from './components/Nav';
-import { Route, Switch, Link, NavLink, Redirect } from 'react-router-dom'
+import { Route, Switch, Link, withRouter } from 'react-router-dom'
 import Select from 'react-select';
 
 
@@ -16,10 +16,31 @@ class App extends Component {
   state = {
     posts: [],
     users: [],
-    comments: [],
-    currentUserID: 3,
     collectionToRender: [],
-    currentUsername: "string"
+    comments: [],
+    currentUserID: '',
+    currentUsername: "Your",
+    commentContent: '',
+    post_id: "",
+    isShowing: false,
+    currentArtwork: "artwork",
+    username:'',
+    bio:'',
+
+
+        toggleUpdateFormShow: false,
+        toggleUpdateCollectionShow: false,
+        updatedArtistName: "update artist name",
+        updatedPostContent: "update post content",
+        newImage: "Paste an Image Address here!",
+        newArtist: "Who made it?",
+        newArtworkTitle: "What is the piece called?",
+        newGenre: "Genre",
+        newPostContent: "What do you think about it?"
+  }
+
+  redirect = () => {
+    this.props.history.push("/home")
   }
 
   fetchPosts = () => {
@@ -54,6 +75,34 @@ class App extends Component {
   }
 
 
+ //MODAL HANDLING
+openModalHandler = (event, post) => {
+  console.log("event hit")
+    this.setState({
+        isShowing: true,
+        currentArtwork: post
+    });
+}
+
+closeModalHandler = (event, post) => {
+  this.setState({
+      isShowing: false
+  });
+}
+
+// USER COLLECTION MODAL HANDLING
+toggleUpdateForm = () => {
+  this.setState({
+    toggleUpdateFormShow: !this.state.toggleUpdateFormShow
+  })
+  }
+
+  toggleUpdateCollectionForm = () => {
+    console.log("event hit")
+    this.setState({
+      toggleUpdateCollectionShow: !this.state.toggleUpdateCollectionShow
+    })
+    }
 
 //FETCH ALL THE DATA - USERS, POSTS, COMMENTS
   componentDidMount(){
@@ -65,17 +114,24 @@ class App extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if(prevProps.collectionToRender !== this.state.collectionToRender){
-      
       // this.fetchUsers()
   }}
-  
 
+  //HANDLECHANGE FOR FORM
+  handleChange = (event) => {
+    event.preventDefault()
 
-  //CREATE A USER
+    this.setState({
+     [event.target.name]: event.target.value,
+     post_id: this.state.currentArtwork.id
+    })
+  }
 
+//CREATE A USER
   submitUser = (event, state) => {
     console.log(event)
     event.preventDefault()
+
     fetch('http://localhost:3000/users', {
         method:'POST',
        headers: { 
@@ -83,75 +139,51 @@ class App extends Component {
            'accept': 'application/json'
        },
        body: JSON.stringify({
-      username: state.username
-    
+      username: this.state.currentUsername
         })
       })
       .then(resp => resp.json())
       .then(json_resp => 
+
  this.setState({
    currentUserID: json_resp.id,
    currentUsername: json_resp.username
- })
-        )
-// this.redirect()                
-
+ }))     
+ this.props.history.push("/usercollection")
 }
 
 //ADD TO COLLECTION
-
-addToCollection = (event, artworkState) => {
-  console.log(artworkState)
-  this.setState({
-    collectionToRender: [...this.state.collectionToRender, artworkState.currentArtwork]
+addToCollection = (event) => {
+  fetch(`http://localhost:3000/posts`, {
+    method:'POST',
+   headers: { 
+       'Content-type': 'application/json',
+       'accept': 'application/json'
+   },
+   body: JSON.stringify({
+    image: this.state.currentArtwork.image,
+    artist: this.state.currentArtwork.artist,
+    artwork_title: this.state.currentArtwork.artwork_title,
+    genre: this.state.currentArtwork.genre,
+    user_id: this.state.currentUserID,
+    })
   })
-  // fetch(`http://localhost:3000/users/${this.state.currentUserID}`, {
-  //   method:'PATCH',
-  //  headers: { 
-  //      'Content-type': 'application/json',
-  //      'accept': 'application/json'
-  //  },
-  //  body: JSON.stringify({
-  // post_id: artworkState.currentArtwork.id
-  //   })
-  // })
-  // .then(resp => resp.json())
-  // .then(json_resp => {console.log(json_resp)})
+  .then(resp => resp.json())
+  .then(json_resp => 
+   this.setState({
+     collectionToRender: [...this.state.collectionToRender, json_resp]
+   })
+    
+   )
+   console.log("fetch hit!", this.state)
+   this.closeModalHandler()
+  this.props.history.push("/usercollection")
+
 }
 
-//SUBMIT A NEW USER
-
-// handleSubmit = (event) => {
-//   console.log(event)
-//   event.preventDefault()
-//   fetch('http://localhost:3000/users', {
-//       method:'POST',
-//      headers: { 
-//          'Content-type': 'application/json',
-//          'accept': 'application/json'
-//      },
-//      body: JSON.stringify({
-//     username: this.state.username
-  
-//       })
-//     })
-//     .then(resp => resp.json())
-//     .then(json_resp => 
-//       this.setState({
-//           currentUserID: json_resp.id,
-//           currentUsername: this.state.username
-//       })
-//       )
-//     }
-  // ADD A COMMENT
-
+// ADD A COMMENT
  submitComment = (event, artWorkState) => {
   event.preventDefault()
-   console.log(artWorkState.comment, this.state)
-  this.setState({
-   comments: [...this.state.comments, artWorkState.comment]
-  })
-  console.log(this.state)
  
   fetch('http://localhost:3000/comments', {
     method:'POST',
@@ -160,57 +192,63 @@ addToCollection = (event, artworkState) => {
        'accept': 'application/json'
    },
    body: JSON.stringify({
-   content: artWorkState.comment,
-   post_id:  artWorkState.currentArtwork.id,
+   content: this.state.commentContent,
+   post_id:  this.state.post_id,
    user_id:  this.state.currentUserID
 
     })
   })
   .then(resp => resp.json())
-  .then(json_resp => {console.log(json_resp)})
+  .then(json_resp => {
+    this.setState({
+    comments: [...this.state.comments, json_resp],
+    commentContent: ""
+    })
+  }
+  )
  }
 
 //UPDATE POST
- submitUpdate = (event, state ) => {
+ submitUpdate = (event) => {
   event.preventDefault()
 
   let newPost = {
-    id: state.currentArtwork.id,
-    image: "https://www.theartstory.org/images20/works/degas_edgar_6.jpg?2",
-    artist: state.updatedArtistName,
-    artwork_title: null,
-    genre: "european impressionism",
+    id: this.state.currentArtwork.id,
+    image: this.state.currentArtwork.image,
+    artist: this.state.currentArtwork.artist,
+    artwork_title: this.state.currentArtwork.artwork_title,
+    genre: this.state.currentArtwork.genre,
     user_id: this.state.currentUserID,
-    post_content: state.updatedPostContent
+    post_content: this.state.newPostContent
   }
    
-  let arrayMinusOne = this.state.posts.filter(post => post.id !== state.currentArtwork.id)
+  let arrayMinusOne = this.state.posts.filter(post => post.id !== this.state.currentArtwork.id)
   let updatedArray = [...arrayMinusOne, newPost]
 
-console.log(updatedArray)
-     this.setState({
-    posts: updatedArray
- })
 
- fetch(`http://localhost:3000/posts`, {
+ //UPDATE POST
+ fetch(`http://localhost:3000/posts/${this.state.currentArtwork.id}`, {
    method:'PATCH',
   headers: { 
       'Content-type': 'application/json',
       'accept': 'application/json'
   },
   body: JSON.stringify({
-    artist: state.updatedArtistName,
-    post_content: state.updatedPostContent
+    post_content: this.state.newPostContent
    })
  })
  .then(resp => resp.json())
- .then(json_resp => {console.log(json_resp)})
-
-
+ .then(json_resp => 
+  
+  this.setState({
+    posts: updatedArray,
+    newPostContent: ""
+ })
+  
+  )
  }
   
  //DELETE POST
-
  deletePost = (event, state) => {
   let arrayMinusOne = this.state.posts.filter(post => post.id !== state.currentArtwork.id)
   this.setState({
@@ -223,8 +261,8 @@ console.log(updatedArray)
        'Content-type': 'application/json',
        'accept': 'application/json'
    },
-   body: JSON.stringify({
 
+   body: JSON.stringify({
     })
   })
   .then(resp => resp.json())
@@ -232,10 +270,8 @@ console.log(updatedArray)
 
 }
 
-
 //NEW POST
-
- submitNewPost = (event, state) => {
+ submitNewPost = (event) => {
   event.preventDefault()
  
    fetch(`http://localhost:3000/posts`, {
@@ -245,12 +281,12 @@ console.log(updatedArray)
         'accept': 'application/json'
     },
     body: JSON.stringify({
-    image: state.newImage,
-    artist: state.newArtist,
-    artwork_title: state.newArtistTitle,
-    genre: state.newGenre,
+    image: this.state.newImage,
+    artist: this.state.newArtist,
+    artwork_title: this.state.newArtistTitle,
+    genre: this.state.newGenre,
     user_id: this.state.currentUserID,
-    post_content: state.newPostContent
+    post_content: this.state.newPostContent
      })
    })
    .then(resp => resp.json())
@@ -258,54 +294,92 @@ console.log(updatedArray)
     
     this.setState({
       posts: [...this.state.posts, json_resp],
-      collectionToRender: [this.state.collectionToRender, json_resp]
-     })
-  
-  
-  
-   
-   )
+     }))
 
-
+   this.toggleUpdateCollectionForm()
  }
   render() {
     
-    let ID = this.state.currentUserID
-    // let found = this.state.collectionToRender; 
+    
 
-    let user = this.state.users.find(user => user.id === ID)
-  
- 
-    console.log(this.state.collectionToRender)
-    console.log(this.state)
+    // let uniquePosts = [...new Set(this.state.posts.artw)]
+
   return (
+
     <div className="App">
 
 <nav className="pa3 pa4-ns">
   <a className="link dim gray b f1 f-headline-ns tc db mb3 mb4-ns" href="#" title="Home"> <header> <h1> artCollect </h1>  </header></a>
+
+  < Link to="/home">Home</Link>
  
-  <div className="tc pb3">
-    {/* <a className="link dim gray f6 f5-ns dib pr3 ma3 mh3 mr3" href="/home" title="Home">Home</a> */}
-    < Link to="/home">Home</Link>
-    {/* <a className="link dim gray f6 f5-ns dib pr3 ma3 mh3 mr3" href="/signup" title="About">Signup</a> */}
-    < Link to="/signup">Signup</Link>
-    {/* <a className="link dim gray f6 f5-ns dib pr3 ma3 mh3 mr3" href="/usercollection" title="About">My Collection</a> */}
-    < Link to="/usercollection">My Collection</Link>
-    {/* <a className="link dim gray f6 f5-ns dib pr3 ma3 mh3 mr3" href="#" title="Store"> <Select options = {genres}/> </a><br></br> */}
-    {/* <a className="link dim gray f6 f5-ns pr3 ma3 mh3 dib" href="#" title="Contact"><Select /> </a> */}
-  </div>
+   < Link to="/signup">Signup</Link>
+   
+    < Link to="/usercollection"  onClick = {this.closeModalHandler}> My Collection</Link>
+
 </nav>
+
       <Switch>
-      <Route path= "/home" render={(props) => <ArtworkContainer addToCollection = {this.addToCollection} posts = {this.state.posts} users = {this.state.users} comments = {this.state.comments} submitComment ={this.submitComment} />}/>
-      <Route path= "/usercollection" render={(props) => <UserCollection currentUsername = {this.state.currentUsername} currentUserID = {this.state.currentUserID} posts = {this.state.collectionToRender}  users = {this.state.users} comments = {this.state.comments} submitUpdate ={this.submitUpdate}   deletePost = {this.deletePost}  submitNewPost = {this.submitNewPost}/>}/>
-      <Route path= "/signup" render={(props) => <Signup history={this.props.history} handleSubmit = {this.submitUser} posts = {this.state.posts} users = {this.state.users} comments = {this.state.comments} submitComment ={this.submitComment} />}/>
+      <Route path= "/home" render={(props) => 
+      <ArtworkContainer  
+      currentArtwork = {this.state.currentArtwork}
+      isShowing = {this.state.isShowing}
+      openModalHandler = {this.openModalHandler} 
+      closeModalHandler = {this.closeModalHandler} 
+      comments = {this.state.comments} 
+      addToCollection = {this.addToCollection} 
+      posts = {this.state.posts} 
+      users = {this.state.users} 
+      comments = {this.state.comments} 
+      commentContent = {this.state.commentContent} 
+      handleChange = {this.handleChange} 
+      submitComment ={this.submitComment} />}/>
+
+      <Route path= "/usercollection" render={(props) => 
+      <UserCollection 
+      redirect = {this.redirect}
+      handleChange = {this.handleChange} 
+      currentArtwork = {this.state.currentArtwork}
+      isShowing = {this.state.isShowing}
+      openModalHandler = {this.openModalHandler} 
+      closeModalHandler = {this.closeModalHandler} 
+      toggleUpdateFormShow = {this.state.toggleUpdateFormShow}
+      toggleUpdateCollectionShow = {this.state.toggleUpdateCollectionShow}
+      toggleUpdateForm = {this.toggleUpdateForm}
+      toggleUpdateCollectionForm = {this.toggleUpdateCollectionForm}
+
+      comments = {this.state.comments} 
+      currentUsername = {this.state.currentUsername} 
+      currentUserID = {this.state.currentUserID} 
+      posts = {this.state.collectionToRender}  
+      users = {this.state.users} 
+      comments = {this.state.comments} 
+      submitUpdate ={this.submitUpdate}   
+      deletePost = {this.deletePost}  
+      submitNewPost = {this.submitNewPost}
+      
+      newImage = {this.state.newImage}
+      newArtist = {this.state.newArtist}
+      newArtworkTitle = {this.state.newArtworkTitle}
+      newGenre = {this.state.newGenre}
+      newPostContent = {this.state.newPostContent}
+      
+        />
+      }/>
+
+      <Route path= "/signup" render={(props) => 
+      <Signup 
+      handleChange = {this.handleChange} 
+      history={this.props.history} 
+      handleSubmit = {this.submitUser} 
+      users = {this.state.users} 
+      comments = {this.state.comments} 
+      submitComment ={this.submitComment} />}/>
 
      </Switch>
        
     </div>
-  );
-}
-}
+  )}}
 
 const genres = [
   { label: "Scuplture", value: 1 },
@@ -315,4 +389,4 @@ const genres = [
   { label: "Performance Art", value: 5 },
   { label: "Miscellaneous", value: 6 }
 ];
-export default App;
+export default withRouter(App);

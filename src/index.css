@@ -184,3 +184,8 @@ code {
       margin-right: 2rem;
   }
 }
+
+.contentDiv{
+  border: 2px solid rgb(132, 126, 126);
+  border-radius: 5px;
+}

@@ -5,14 +5,25 @@ import Artworks from '../components/Artworks'
 export default class ArtworkContainer extends Component {
     render() {
       
-        let sizes = ["4", "6", "9"]
-        let size = sizes[Math.floor(Math.random()*sizes.length)]
 
         return (
             <div>
-                 <Artworks addToCollection = {this.props.addToCollection} posts = {this.props.posts} size = {this.props.size} users = {this.props.users} comments = {this.props.comments} submitComment = {this.props.submitComment}/>)
-          
+                 <Artworks
+                 currentArtwork = {this.props.currentArtwork}
+                 isShowing = {this.props.isShowing} 
+                 openModalHandler = {this.props.openModalHandler} 
+                 closeModalHandler = {this.props.closeModalHandler} 
+                 commentContent = {this.props.commentContent} 
+                 handleChange = {this.props.handleChange}
+                 addToCollection = {this.props.addToCollection} 
+                 posts = {this.props.posts} 
+                 size = {this.props.size} 
+                 users = {this.props.users} 
+                 comments = {this.props.comments} 
+                 submitComment = {this.props.submitComment}/>
             </div>
-        )
+            
+                 )
+
     }
 }
