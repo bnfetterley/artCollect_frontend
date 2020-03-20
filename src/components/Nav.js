@@ -1,23 +1,30 @@
-import React, { Component } from 'react'
-import '../Nav.css'
+import  React, {Fragment} from 'react';
+import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import userActions from '../redux/actions';
 
+const Nav = () => {
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    dispatch(userActions.logoutUser());
+  };
+  return (
+      <Fragment>
+   <header style={{ display: 'flex', justifyContent: 'center' }}> <h1> artCollect </h1>  </header>
+   <br>
+   </br>
+    <nav style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+       
+      <Link to="/">Home</Link>
+      <Link to="/signup">Signup</Link>
+      <Link to="/login">Login</Link>
+      <Link to="/" onClick={handleLogout}>Logout</Link>
+      <Link to="/usercollection" 
+    //   onClick = {this.closeModalHandler}
+      > User Collection</Link>
+    </nav>
+ </Fragment>
+  );
+};
 
-export default class Nav extends Component {
-    render() {
-        return (
-            <div>
-                <nav className="pa3 pa4-ns">
-  <a className="link dim gray b f1 f-headline-ns tc db mb3 mb4-ns" href="#" title="Home"> <header> <h1> artCollect </h1>  </header></a>
- 
-  <div className="tc pb3">
-    <a className="link dim gray f6 f5-ns dib pr3 ma3 mh3 mr3" href="#" title="Home">Home</a>
-    <a className="link dim gray f6 f5-ns dib pr3 ma3 mh3 mr3" href="#" title="About">My Collection</a>
-    <a className="link dim gray f6 f5-ns dib pr3 ma3 mh3 mr3" href="#" title="Store">Genres</a>
-    <a className="link dim gray f6 f5-ns pr3 ma3 mh3 dib" href="#" title="Contact">Sort By</a>
-  </div>
-</nav>
-                
-            </div>
-        )
-    }
-}
+export default Nav;

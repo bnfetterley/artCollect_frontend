@@ -5,21 +5,27 @@ import "mdbreact/dist/css/mdb.css";
 import './App.css';
 import ArtworkContainer from './containers/ArtworkContainer'
 import UserCollection from './components/UserCollection'
-import Signup from './components/Signup'
+import Signup from './Pages/Signup'
+import Login from './Pages/Login'
 import Nav from './components/Nav';
 import { Route, Switch, Link, withRouter } from 'react-router-dom'
-import Select from 'react-select';
+import { BrowserRouter as Router} from 'react-router-dom';
+// import createBrowserHistory from 'history/createBrowserHistory'
+
+
+
+// export const history = createBrowserHistory()
 
 
 class App extends Component {
+
 
   state = {
     posts: [],
     users: [],
     collectionToRender: [],
     comments: [],
-    currentUserID: '',
-    currentUsername: "Your",
+    currentUserID: 0,
     commentContent: '',
     post_id: "",
     isShowing: false,
@@ -39,8 +45,13 @@ class App extends Component {
         newPostContent: "What do you think about it?"
   }
 
-  redirect = () => {
-    this.props.history.push("/home")
+  redirect = (event, login) => {
+    this.setState({
+      currentUserID: login.id
+    })
+    console.log(login, this.state)
+    this.props.history.push("/")
+    
   }
 
   fetchPosts = () => {
@@ -145,10 +156,11 @@ toggleUpdateForm = () => {
       .then(resp => resp.json())
       .then(json_resp => 
 
- this.setState({
-   currentUserID: json_resp.id,
-   currentUsername: json_resp.username
- }))     
+        this.setState({
+         currentUserID: json_resp.id,
+         currentUsername: json_resp.username,
+         users: [...this.state.users, json_resp]
+        }))     
  this.props.history.push("/usercollection")
 }
 
@@ -184,6 +196,8 @@ addToCollection = (event) => {
 // ADD A COMMENT
  submitComment = (event, artWorkState) => {
   event.preventDefault()
+
+  console.log(this.state.commentContent, this.state.currentArtwork.post_id, this.state.currentUserID)
  
   fetch('http://localhost:3000/comments', {
     method:'POST',
@@ -193,7 +207,7 @@ addToCollection = (event) => {
    },
    body: JSON.stringify({
    content: this.state.commentContent,
-   post_id:  this.state.post_id,
+   post_id:  this.state.currentArtwork.id,
    user_id:  this.state.currentUserID
 
     })
@@ -206,6 +220,8 @@ addToCollection = (event) => {
     })
   }
   )
+
+  console.log("fetch hit")
  }
 
 //UPDATE POST
@@ -224,7 +240,6 @@ addToCollection = (event) => {
    
   let arrayMinusOne = this.state.posts.filter(post => post.id !== this.state.currentArtwork.id)
   let updatedArray = [...arrayMinusOne, newPost]
-
 
  //UPDATE POST
  fetch(`http://localhost:3000/posts/${this.state.currentArtwork.id}`, {
@@ -299,28 +314,22 @@ addToCollection = (event) => {
    this.toggleUpdateCollectionForm()
  }
   render() {
-    
-    
 
-    // let uniquePosts = [...new Set(this.state.posts.artw)]
+  
+ 
 
   return (
 
     <div className="App">
 
-<nav className="pa3 pa4-ns">
-  <a className="link dim gray b f1 f-headline-ns tc db mb3 mb4-ns" href="#" title="Home"> <header> <h1> artCollect </h1>  </header></a>
 
-  < Link to="/home">Home</Link>
- 
-   < Link to="/signup">Signup</Link>
-   
-    < Link to="/usercollection"  onClick = {this.closeModalHandler}> My Collection</Link>
 
-</nav>
+<Switch>
 
-      <Switch>
-      <Route path= "/home" render={(props) => 
+
+  <Route path="/signup" render={(props) => <Signup/>} />
+      
+      <Route exact path= "/" render={(props) => 
       <ArtworkContainer  
       currentArtwork = {this.state.currentArtwork}
       isShowing = {this.state.isShowing}
@@ -335,6 +344,9 @@ addToCollection = (event) => {
       handleChange = {this.handleChange} 
       submitComment ={this.submitComment} />}/>
 
+      <Route path="/login" render = {(props) => <Login/>}/>
+
+
       <Route path= "/usercollection" render={(props) => 
       <UserCollection 
       redirect = {this.redirect}
@@ -347,11 +359,11 @@ addToCollection = (event) => {
       toggleUpdateCollectionShow = {this.state.toggleUpdateCollectionShow}
       toggleUpdateForm = {this.toggleUpdateForm}
       toggleUpdateCollectionForm = {this.toggleUpdateCollectionForm}
-
+      
       comments = {this.state.comments} 
       currentUsername = {this.state.currentUsername} 
       currentUserID = {this.state.currentUserID} 
-      posts = {this.state.collectionToRender}  
+      posts = {this.state.posts}  
       users = {this.state.users} 
       comments = {this.state.comments} 
       submitUpdate ={this.submitUpdate}   
@@ -364,8 +376,8 @@ addToCollection = (event) => {
       newGenre = {this.state.newGenre}
       newPostContent = {this.state.newPostContent}
       
-        />
-      }/>
+      />
+    }/>
 
       <Route path= "/signup" render={(props) => 
       <Signup 
@@ -375,8 +387,10 @@ addToCollection = (event) => {
       users = {this.state.users} 
       comments = {this.state.comments} 
       submitComment ={this.submitComment} />}/>
+      </Switch>
 
-     </Switch>
+      
+     
        
     </div>
   )}}
@@ -389,4 +403,6 @@ const genres = [
   { label: "Performance Art", value: 5 },
   { label: "Miscellaneous", value: 6 }
 ];
-export default withRouter(App);
+
+
+export default withRouter (App);

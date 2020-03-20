@@ -34,7 +34,10 @@ return (
             </p> 
               <div className = "contentDiv">
                 <p>
-                  <b>{this.props.currentArtwork && this.props.users.find(user => user.id === this.props.currentArtwork.user_id).username}'s </b> thoughts on this artwork: 
+                  <b>{this.props.currentArtwork && this.props.users.find(user => user.id === this.props.currentArtwork.user_id).username
+                  && this.props.users.find(user => user.id === this.props.currentArtwork.user_id).username
+                  
+                  }'s </b> thoughts on this artwork: 
                 </p>
 
                 <p> 
@@ -44,8 +47,8 @@ return (
                 <p> 
                   <b>COMMENTS: </b> 
                 </p>
-
-          {content.map(comment => <p> <b> {this.props.users.find(user => user.id === comment.user_id).username} said:</b> {comment.content}</p>)}
+              {console.log(this.props)}
+          { content.map(comment => <p> <b> {this.props.users.find(user => user.id === comment.user_id).username} said:</b> {comment.content}</p>)}
     
         
             <form onSubmit={(event) => this.props.submitComment(event, this.state)}>
