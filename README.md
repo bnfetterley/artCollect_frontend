@@ -3,9 +3,9 @@
 
 artCollect is an app that allows you to discover artworks and share your favorite pieces in your own collection.
 
-![image](https://github.com/bnfetterley/artCollect_frontend/src/images/Home_Page.png)
-![image](https://github.com/bnfetterley/artCollect_frontend/src/images/User_Collection.png)
-![image](https://github.com/bnfetterley/artCollect_frontend/src/images/Show_Page.png)
+![image](https://github.com/bnfetterley/artCollect_frontend/blob/master/src/images/Home_Page.png)
+![image](https://github.com/bnfetterley/artCollect_frontend/blob/master/src/images/User_Collection.png)
+![image](https://github.com/bnfetterley/artCollect_frontend/blob/master/src/images/Show_Page.png)
 
 ## Motivation
 <!-- A short description of the motivation behind the creation and maintenance of the project. This should explain why the project exists. -->
