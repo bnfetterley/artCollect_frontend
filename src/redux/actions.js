@@ -1,6 +1,5 @@
 
 import { history } from '../App'
-// import { browserHistory } from 'react-router'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { createBrowserHistory } from 'history';
@@ -11,7 +10,6 @@ const MySwal = withReactContent(Swal)
 
 
 // API CONSTANTS
-
 
 const BASE_URL = 'http://localhost:3000';
 const USERS_URL = BASE_URL + '/users';
