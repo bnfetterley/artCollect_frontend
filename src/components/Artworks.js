@@ -70,10 +70,7 @@ return (
     >
           {this.props.posts.map(post =>  
           <div key = {post.id}  onClick = {(event) => this.props.openModalHandler(event, post)}><img src = {post.image} className="img-responsive fit-image"/></div>)}
-         {this.props.posts.map(post =>  
-          <div key = {post.id}  onClick = {(event) => this.props.openModalHandler(event, post)}><img src = {post.image} className="img-responsive fit-image"/></div>)}
-         {this.props.posts.map(post =>  
-          <div key = {post.id}  onClick = {(event) => this.props.openModalHandler(event, post)}><img src = {post.image} className="img-responsive fit-image"/></div>)}
+        
       </StackGrid>
 
 </div>
