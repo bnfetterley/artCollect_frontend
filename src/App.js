@@ -7,9 +7,7 @@ import ArtworkContainer from './containers/ArtworkContainer';
 import UserCollection from './components/UserCollection';
 import Signup from './Pages/Signup';
 import Login from './Pages/Login';
-import Nav from './components/Nav';
-import { Route, Switch, Link, withRouter } from 'react-router-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
 // import createBrowserHistory from 'history/createBrowserHistory'
 
 // export const history = createBrowserHistory()
@@ -20,7 +18,6 @@ class App extends Component {
     users: [],
     collectionToRender: [],
     comments: [],
-    currentUserID: 0,
     commentContent: '',
     post_id: '',
     isShowing: false,
@@ -157,6 +154,8 @@ class App extends Component {
 
   //ADD TO COLLECTION
   addToCollection = (event) => {
+    console.log('fetch hit!');
+
     fetch(`https://artcollect-backend.herokuapp.com/posts`, {
       method: 'POST',
       headers: {
@@ -235,16 +234,19 @@ class App extends Component {
     let updatedArray = [...arrayMinusOne, newPost];
 
     //UPDATE POST
-    fetch(`https://artcollect-backend.herokuapp.com/posts/${this.state.currentArtwork.id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-type': 'application/json',
-        accept: 'application/json',
-      },
-      body: JSON.stringify({
-        post_content: this.state.newPostContent,
-      }),
-    })
+    fetch(
+      `https://artcollect-backend.herokuapp.com/posts/${this.state.currentArtwork.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-type': 'application/json',
+          accept: 'application/json',
+        },
+        body: JSON.stringify({
+          post_content: this.state.newPostContent,
+        }),
+      }
+    )
       .then((resp) => resp.json())
       .then((json_resp) =>
         this.setState({
@@ -282,7 +284,9 @@ class App extends Component {
   submitNewPost = (event) => {
     event.preventDefault();
 
-    fetch(`http://localhost:3000/posts`, {
+    console.log('post fetch hit');
+
+    fetch(`https://artcollect-backend.herokuapp.com/posts`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
@@ -293,20 +297,25 @@ class App extends Component {
         artist: this.state.newArtist,
         artwork_title: this.state.newArtistTitle,
         genre: this.state.newGenre,
-        user_id: this.state.currentUserID,
+        user_id: this.props.login.id,
         post_content: this.state.newPostContent,
       }),
     })
       .then((resp) => resp.json())
       .then((json_resp) =>
-        this.setState({
-          posts: [...this.state.posts, json_resp],
-        })
+        this.setState(
+          {
+            posts: [...this.state.posts, json_resp],
+          },
+          console.log(json_resp)
+        )
       );
 
     this.toggleUpdateCollectionForm();
   };
+
   render() {
+    console.log(this.state);
     return (
       <div className="App">
         <Switch>
