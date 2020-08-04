@@ -27,13 +27,13 @@ class App extends Component {
 
     toggleUpdateFormShow: false,
     toggleUpdateCollectionShow: false,
-    updatedArtistName: 'update artist name',
-    updatedPostContent: 'update post content',
-    newImage: 'Paste an Image Address here!',
-    newArtist: 'Who made it?',
-    newArtworkTitle: 'What is the piece called?',
-    newGenre: 'Genre',
-    newPostContent: 'What do you think about it?',
+    updatedArtistName: '',
+    updatedPostContent: '',
+    newImage: '',
+    newArtist: '',
+    newArtworkTitle: '',
+    newGenre: '',
+    newPostContent: '',
   };
 
   redirect = (event, login) => {
@@ -305,7 +305,12 @@ class App extends Component {
       .then((json_resp) =>
         this.setState(
           {
-            posts: [...this.state.posts, json_resp],
+            image: '',
+            artist: '',
+            artwork_title: '',
+            genre: '',
+            user_id: this.props.login.id,
+            post_content: '',
           },
           console.log(json_resp)
         )

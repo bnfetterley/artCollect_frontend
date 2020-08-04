@@ -120,30 +120,35 @@ const UserCollection = (props) => {
             <textarea
               name="newImage"
               value={props.newImage}
+              placeholder="Paste an Image Address here"
               onChange={(event) => props.handleChange(event)}
             />
             <br></br>
             <textarea
               name="newArtworkTitle"
               value={props.newArtworkTitle}
+              placeholder="What is the name of this artwork?"
               onChange={(event) => props.handleChange(event)}
             />
             <br></br>
             <textarea
               name="newArtist"
               value={props.newArtist}
+              placeholder="Who made this piece?"
               onChange={(event) => props.handleChange(event)}
             />
             <br></br>
             <textarea
               name="newGenre"
               value={props.newGenre}
+              placeholder="What genre is this piece?"
               onChange={(event) => props.handleChange(event)}
             />
             <br></br>
             <textarea
               name="newPostContent"
               value={props.newPostContent}
+              placeholder="What are your thoughts about this piece?"
               onChange={(event) => props.handleChange(event)}
             />
             <br></br>
