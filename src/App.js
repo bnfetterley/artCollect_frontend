@@ -295,7 +295,7 @@ class App extends Component {
       body: JSON.stringify({
         image: this.state.newImage,
         artist: this.state.newArtist,
-        artwork_title: this.state.newArtistTitle,
+        artwork_title: this.state.newArtworkTitle,
         genre: this.state.newGenre,
         user_id: this.props.login.id,
         post_content: this.state.newPostContent,
