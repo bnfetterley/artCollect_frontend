@@ -8,9 +8,6 @@ import UserCollection from './components/UserCollection';
 import Signup from './Pages/Signup';
 import Login from './Pages/Login';
 import { Route, Switch, withRouter } from 'react-router-dom';
-// import createBrowserHistory from 'history/createBrowserHistory'
-
-// export const history = createBrowserHistory()
 
 class App extends Component {
   state = {

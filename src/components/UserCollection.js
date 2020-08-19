@@ -5,7 +5,6 @@ import Modal from './Modal/Modal';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../redux/actions';
 
-// export default class UserCollection extends Component {
 
 const UserCollection = (props) => {
   const username = useSelector((state) => state.username);
@@ -24,18 +23,18 @@ const UserCollection = (props) => {
 
   let id = props.currentUserID;
 
-  // let postsToRender = props.posts.filter(post => post.user_id === props.currentUserID)
+ 
   let renderComments = props.comments.filter(
     (comment) => comment.post_id === props.currentArtwork.id
   );
 
   let view = props.toggleUpdateForm === 'view';
   let addCollectionView = props.toggleUpdateCollection === 'view';
-  // console.log(username, login)
+
 
   return (
     <div className="container">
-      {/* { props.isShowing ? <div onClick={props.closeModalHandler} className="back-drop"></div> : null } */}
+   
 
       {props.isShowing ? (
         <Modal
