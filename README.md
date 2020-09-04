@@ -1,6 +1,7 @@
 # artCollect
 <!-- A little info about your project and/ or overview that explains what the project is about. -->
-
+See this project live, hosted on Netlify and Heroku: https://artcollect-frontend.netlify.app/
+Check my other projects at www.brifetterley.com
 artCollect is an app that allows you to discover artworks and share your favorite pieces in your own collection.
 
 ![image](https://github.com/bnfetterley/artCollect_frontend/blob/master/src/images/Home_Page.png)
